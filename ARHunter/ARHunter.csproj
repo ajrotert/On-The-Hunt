@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectGuid>{6980D8A4-36F6-4E90-897D-7B1957AFD7D2}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ARHunter</RootNamespace>
+    <AssemblyName>ARHunter</AssemblyName>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer: Andrew Rotert (FQXHR43G8Z)</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFastDev>true</MtouchFastDev>
+    <IOSDebuggerPort>51036</IOSDebuggerPort>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>x86_64</MtouchArch>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer: Andrew Rotert (FQXHR43G8Z)</CodesignKey>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchArch>ARM64</MtouchArch>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer: Andrew Rotert (FQXHR43G8Z)</CodesignKey>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>x86_64</MtouchArch>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer: Andrew Rotert (FQXHR43G8Z)</CodesignKey>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <IOSDebuggerPort>11666</IOSDebuggerPort>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchArch>ARM64</MtouchArch>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="SQLitePCLRaw.core">
+      <HintPath>..\packages\SQLitePCLRaw.core.1.1.13\lib\Xamarin.iOS10\SQLitePCLRaw.core.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.provider.sqlite3">
+      <HintPath>..\packages\SQLitePCLRaw.provider.sqlite3.ios_unified.1.1.13\lib\Xamarin.iOS10\SQLitePCLRaw.provider.sqlite3.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_green">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.13\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_green.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCLRaw.batteries_v2">
+      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.13\lib\Xamarin.iOS10\SQLitePCLRaw.batteries_v2.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite-net">
+      <HintPath>..\packages\sqlite-net-pcl.1.6.292\lib\netstandard1.1\SQLite-net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_40.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_60.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_58.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_87.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_80.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_120.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_167.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_55.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_180_7.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\ARHunter_1024x1024.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="LaunchScreen.storyboard" />
+    <InterfaceDefinition Include="Main.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="ViewController.cs" />
+    <Compile Include="ViewController.designer.cs">
+      <DependentUpon>ViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocationFinder.cs" />
+    <Compile Include="HeaderFinder.cs" />
+    <Compile Include="ShotsAnnotation.cs" />
+    <Compile Include="MapDelegate.cs" />
+    <Compile Include="Data.cs" />
+    <Compile Include="Audio.cs" />
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="SoundTestingController.cs" />
+    <Compile Include="SoundTestingController.designer.cs">
+      <DependentUpon>SoundTestingController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LowPassAudio.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ARH_Pause_Button.png" />
+    <BundleResource Include="Resources\ARH_Start_Button.png" />
+    <BundleResource Include="Resources\ARH_Stop_Button.png" />
+    <BundleResource Include="Resources\Background3.png" />
+    <BundleResource Include="Resources\ARH_Bar_Blank.png" />
+    <BundleResource Include="Resources\ARH_Bar_Center.png" />
+    <BundleResource Include="Resources\ARH_Bar_East.png" />
+    <BundleResource Include="Resources\ARH_Bar_North.png" />
+    <BundleResource Include="Resources\ARH_Bar_South.png" />
+    <BundleResource Include="Resources\ARH_Bar_West.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_E.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_NE.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_NW.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_S.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_SE.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_SW.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass_W.png" />
+    <BundleResource Include="Resources\ARH_Bar_Compass.png" />
+    <BundleResource Include="Resources\ARH_Bar_Add.png" />
+    <BundleResource Include="Resources\Background4.png" />
+    <BundleResource Include="Resources\ARH_Banner_Logo.png" />
+    <BundleResource Include="Resources\ARH_Banner_Logo2.png" />
+    <BundleResource Include="Resources\LoadingLogo6.png" />
+    <BundleResource Include="Resources\ShotAnnotationpng.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork%402x" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+</Project>

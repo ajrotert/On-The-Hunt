@@ -75,6 +75,8 @@ namespace ARHunter
                     if (temp.Equals(0))
                         nonZero++;
                 }
+                int tester;
+                //Need to figure out how the buffer works, if at all
                 total = Math.Sqrt(total / nonZero);
                 double avgPower = 20 * Math.Log10(total);
                 avgPower /= 160;

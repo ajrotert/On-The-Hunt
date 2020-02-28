@@ -21,7 +21,10 @@ namespace ARHunter
         Thread AudioThread;
         private int AudioThreadSleep = 15;
 
-        public static bool debugPrint = false;
+        public static bool debugPrint = true;
+        private bool LocationAllowed;
+        Thread Locations;
+        UIAlertController alertController;
 
         private Queue<CLLocationCoordinate2D> Shots_Found = new Queue<CLLocationCoordinate2D>();
 
@@ -29,7 +32,8 @@ namespace ARHunter
         {
             // Note: this .ctor should not contain any initialization logic.
             LocationFinderManager = new LocationFinder();
-            LocationFinderManager.StartLocationUpdates();
+            LocationAllowed = LocationFinderManager.LocationServeciesStarted(true);
+            LocationAllowed = LocationFinderManager.StartLocationUpdates();
             HeaderFinderManager = new HeaderFinder();
             HeaderFinderManager.StartLocationUpdates();
         }
@@ -162,7 +166,8 @@ namespace ARHunter
             //Initalizing Audio thread to the sound updates function
             ////       AudioThread = new Thread(SoundUpdates);
 
-            AudioThread = new Thread(UpdateSoundBar);
+            //AUDIO ISSUE HERE
+           // AudioThread = new Thread(UpdateSoundBar);
 
             Pause_Button.Enabled = false;
 
@@ -171,10 +176,66 @@ namespace ARHunter
             if (debugPrint) Console.WriteLine("Finished Loading");
 
             LowPassAudio au = new LowPassAudio();
-            au.AudioSetupStart();
+            //AUDIO ISSUE HERE
+            // au.AudioSetupStart();
 
         }
+        private void StartFuction()
+        {
+            if(!LocationAllowed)
+            {
+                Locations = new Thread(AskForLocation);
+                Locations.Start();
+            }
+            else
+            {
+                LocationFinderManager.StartDataCollection();
+            }
+        }
+        private void StopFunction()
+        {
+            if (Locations != null)
+                Locations.Abort();
+            LocationFinderManager.EndDataCollection();
+            LocationFinderManager.EndLocationUpdates();
 
+            if(MapView != null)
+            {
+                MapView.ShowsUserLocation = false;
+                MapView.UserTrackingMode = MKUserTrackingMode.None;
+            }
+        }
+        public override void ViewDidAppear(bool animated)
+        {
+            StartFuction();
+        }
+        private void AskForLocation()
+        {
+            int WaitTime = 5000;
+            while (!LocationAllowed)
+            {
+                Thread.Sleep(WaitTime);
+                ShowErrorMessage("Location Services Not Allowed", "Please turn on location services in settings.\nTurn on: Privacy->Location Services");
+                LocationAllowed = LocationFinderManager.LocationServeciesStarted(false);
+                LocationAllowed = LocationFinderManager.StartLocationUpdates();
+                WaitTime += WaitTime;
+                if (WaitTime > 60000)
+                    WaitTime = 60000;
+            }
+            LocationFinderManager.StartDataCollection();
+        }
+        public void ShowErrorMessage(string title = "Location Services OFF", string message = "Please turn on location services in settings.\nTurn on: Privacy->Location Services")
+        {
+            InvokeOnMainThread(delegate
+            {
+                alertController = UIAlertController.Create(title, message, UIAlertControllerStyle.ActionSheet);
+                //Add Action
+                alertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+
+                // Present Alert
+                PresentViewController(alertController, true, null);
+            });
+        }
         /* ////   public void SoundUpdates()
             {
                 //This function is threaded from teh main thread.

@@ -17,7 +17,10 @@ namespace ARHunter
         {
             locationManager = new CLLocationManager();
             locationManager.PausesLocationUpdatesAutomatically = false;
-
+        }
+        public bool LocationServeciesStarted(bool PrintErrorMessage)
+        {
+            bool pass = true;
             if (CLLocationManager.LocationServicesEnabled)
             {
                 if (UIDevice.CurrentDevice.CheckSystemVersion(8, 0))
@@ -34,40 +37,41 @@ namespace ARHunter
             }
             else
             {
-                UIAlertView alerting = new UIAlertView()
+                if(PrintErrorMessage)
                 {
-                    Title = "Location Services OFF",
-                    Message = "Please turn on location services in settings." + Environment.NewLine + "Turn on: Privacy->Location Services"
-                };
-
-                alerting.AddButton("OK");
-                alerting.Show();
+                    try
+                    {
+                        var presentRootController = GetRootController();
+                        presentRootController?.InvokeOnMainThread(delegate {
+                            string TitleM = "Location Services OFF", MessageM = "Please turn on location services in settings." + Environment.NewLine + "Turn on: Privacy->Location Services";
+                            UIAlertController alertController = UIAlertController.Create(TitleM, MessageM, UIAlertControllerStyle.ActionSheet);
+                            alertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Destructive, null));
+                            presentRootController?.PresentViewController(alertController, true, null);
+                        });
+                    }
+                    catch
+                    {
+                        if (ViewController.debugPrint) Console.WriteLine("Error");
+                    }
+                }
+                pass = false;
             }
             if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
             {
                 locationManager.AllowsBackgroundLocationUpdates = true;
             }
 
-            /*else if (MapView.UserLocation == null || !MapView.UserLocationVisible)
-            {
-                UIAlertView alert = new UIAlertView()
-                {
-                    Title = "Location",
-                    Message = "Locatoin services not found." + Environment.NewLine + "Turn on: Privacy->Location Services->ARHunter"
-                    };
-
-
-                alert.AddButton("OK");
-                alert.Show();
-            } //Debug*/
-
             LocationUpdated += PrintLocation;
             LocationUpdated += UpdateData;
-
+            return pass;
         }
 
-        public void StartLocationUpdates()
+        public bool StartLocationUpdates()
         {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
+            {
+                locationManager.AllowsBackgroundLocationUpdates = true;
+            }
             if (CLLocationManager.LocationServicesEnabled) {
                 locationManager.DesiredAccuracy = 1;
                 locationManager.LocationsUpdated += (object sender, CLLocationsUpdatedEventArgs e) =>
@@ -75,27 +79,43 @@ namespace ARHunter
                 LocationUpdated (this, new LocationUpdatedEventArgs (e.Locations [e.Locations.Length - 1]));
                 };
                 locationManager.StartUpdatingLocation();
+                return true;
+            }
+            else
+            {
+                if (ViewController.debugPrint) Console.WriteLine("Location services not turned on");
+                return false;
             }
 
         }
         public void StartDataCollection()
         {
-            //// Add a try catch
             try
             {
-                data = new Data(locationManager.Location.Coordinate);//Initiallized data with the starting coordinate
+                data = new Data(locationManager.Location.Coordinate);
             }
-            catch { }
+            catch
+            {
+                if (ViewController.debugPrint) Console.WriteLine("Data Collection Failed");
+            }
             started = true;
         }
         public void EndDataCollection()
         {
+            /*From my other build
+            try { data.locs.Clear(); }
+            catch { Console.WriteLine("Data Empty"); }
+             */
             started = false;
         }
         public void EndLocationUpdates()
         {
             started = false;
             locationManager.StopUpdatingLocation();
+            if (UIDevice.CurrentDevice.CheckSystemVersion(9, 0))
+            {
+                locationManager.AllowsBackgroundLocationUpdates = false;
+            }
         }
         public CLLocationCoordinate2D GetLocation()
         {
@@ -106,6 +126,19 @@ namespace ARHunter
             if (started)
             {
                 if (ViewController.debugPrint) Console.WriteLine("::Data::");
+                if (data == null)
+                {
+                    if (ViewController.debugPrint) Console.WriteLine("::Data is null::");
+                    try
+                    {
+                        data = new Data(locationManager.Location.Coordinate);//Initiallized data with the starting coordinate
+
+                    }
+                    catch
+                    {
+                        data = new Data(new CLLocationCoordinate2D(0, 0));//Initiallized data with the starting coordinate
+                    }
+                }
                 data.Add(e.Location.Coordinate);    //Adds each coordinate to the list in data
                 //if (ViewController.sound.started)   
                 //    Console.WriteLine("SOUND UPDATED " + ViewController.sound.workVolume());
@@ -135,7 +168,25 @@ namespace ARHunter
 
         }
 
+        public UIViewController GetRootController()
+        {
+            var root = UIApplication.SharedApplication.KeyWindow.RootViewController;
+            while (true)
+            {
+                switch (root)
+                {
+                    case UINavigationController navigationController:
+                        root = navigationController.VisibleViewController;
+                        continue;
+                    case UITabBarController uiTabBarController:
+                        root = uiTabBarController.SelectedViewController;
+                        continue;
+                }
 
+                if (root.PresentedViewController == null) return root;
+                root = root.PresentedViewController;
+            }
+        }
 
     }
 }

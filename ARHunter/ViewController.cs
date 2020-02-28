@@ -166,8 +166,7 @@ namespace ARHunter
             //Initalizing Audio thread to the sound updates function
             ////       AudioThread = new Thread(SoundUpdates);
 
-            //AUDIO ISSUE HERE
-           // AudioThread = new Thread(UpdateSoundBar);
+            AudioThread = new Thread(UpdateSoundBar);
 
             Pause_Button.Enabled = false;
 
@@ -177,7 +176,7 @@ namespace ARHunter
 
             LowPassAudio au = new LowPassAudio();
             //AUDIO ISSUE HERE
-            // au.AudioSetupStart();
+            au.AudioSetupStart();
 
         }
         private void StartFuction()

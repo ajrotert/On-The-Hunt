@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using CoreFoundation;
 using UIKit;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ARHunter
 {
@@ -40,7 +41,7 @@ namespace ARHunter
 
             //not sure if this is necessary
             nodeEQ.Bands[0] = filter;
-
+            
             //1
             AVAudioFormat format2 = engine.MainMixerNode.GetBusOutputFormat(0);
 
@@ -52,17 +53,20 @@ namespace ARHunter
                         //2
             engine.MainMixerNode.InstallTapOnBus(0, 1024, format2, (AVAudioPcmBuffer buffMix, AVAudioTime when)=>
             {
-                Console.WriteLine("Called");
+                //Console.WriteLine("Called");
                 
                 //3     **Dont have an 'Updater' also not checking for null**
                 IntPtr channelData = buffMix.FloatChannelData;
 
                 int lengthOfBuffer = (int)buffMix.FrameLength;
 
+                int frame_length = (int)buffMix.FrameLength;
+                /*
                 byte[] bytesArray = new byte[lengthOfBuffer];
 
                 Marshal.Copy(channelData, bytesArray, 0, lengthOfBuffer);
-
+                */
+                /*
                 double total = 0;
                 int nonZero = 0;
                 for (int a = 0; a < buffMix.FrameLength - 4; a+=1)
@@ -87,6 +91,12 @@ namespace ARHunter
                 //Console.WriteLine(avgPower);
 
                 Marshal.FreeHGlobal(channelData);
+                */
+                //var ns = buffMix.MutableCopy(); //test later
+
+                T_Proccess tws = new T_Proccess(channelData, lengthOfBuffer, frame_length);
+                Thread processer = new Thread(new ThreadStart(tws.ThreadProc));
+                processer.Start();
             });
 
             AVAudioFormat format = engine.InputNode.GetBusInputFormat(0);
@@ -106,5 +116,49 @@ namespace ARHunter
                 Console.WriteLine(error.LocalizedDescription);
         }
 
+    }
+    public class T_Proccess
+    {
+        IntPtr data;
+        int length_of_buffer;
+        int frame_length;
+
+        public T_Proccess(IntPtr data, int length_of_buffer, int frame_length)
+        {
+            this.data = data;
+            this.length_of_buffer = length_of_buffer;
+            this.frame_length = frame_length;
+        }
+
+        public void ThreadProc()
+        {
+                byte[] bytesArray = new byte[length_of_buffer];
+
+                Marshal.Copy(data, bytesArray, 0, length_of_buffer);
+            double total = 0;
+            int nonZero = 0;
+            for (int a = 0; a < frame_length - 4; a+=1)
+            {
+                //float tempx = BitConverter.ToSingle(bytesArray, a);
+                float tempx = bytesArray[a];
+                //Console.WriteLine(tempx);
+                double temp = Math.Pow(tempx, 2);
+                total += temp;
+                if (temp.Equals(0))
+                    nonZero++;
+            }
+            int tester;
+            //Need to figure out how the buffer works, if at all
+            total = Math.Sqrt(total / nonZero);
+            double avgPower = 20 * Math.Log10(total);
+            avgPower /= 160;
+
+            if (avgPower > .9)
+                LowPassAudio.High_Level_Detected++;
+            LowPassAudio.FloatQueue.Enqueue((float)avgPower);
+            Console.WriteLine(avgPower);
+
+           // Marshal.FreeHGlobal(data);
+        }
     }
 }

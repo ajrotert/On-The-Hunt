@@ -10,6 +10,7 @@ namespace ARHunter
     {
         private readonly CLLocationManager locationManager;
         public event EventHandler<HeadingUpdatedEventArgs> HeadingUpdated = delegate { };
+        public static readonly bool debugPrint = false;
 
         public HeaderFinder()
         {
@@ -34,23 +35,21 @@ namespace ARHunter
 
         public void PrintHeading(object sender, HeadingUpdatedEventArgs e)
         {
+            //Used for debugging. Prints the heading.
+
             CLHeading head = e.GShead;
 
             if (head.TrueHeading >= 0 && head.TrueHeading < 90)
-                if(false)Console.WriteLine("Course: True North");
+                if(debugPrint) Console.WriteLine("Course: True North");
             else if (head.TrueHeading >= 90 && head.TrueHeading < 180)
-                if (false) Console.WriteLine("Course: True East");
+                if (debugPrint) Console.WriteLine("Course: True East");
             else if (head.TrueHeading >= 180 && head.TrueHeading < 270)
-                if (false) Console.WriteLine("Course: True South");
+                if (debugPrint) Console.WriteLine("Course: True South");
             else if (head.TrueHeading >= 270 && head.TrueHeading < 360)
-                if (false) Console.WriteLine("Course: True West");
+                if (debugPrint) Console.WriteLine("Course: True West");
             else
-                if (false) Console.WriteLine("True Course: " + head.TrueHeading);
+                if (debugPrint) Console.WriteLine("True Course: " + head.TrueHeading);
 
-
-
-            //if (ViewController.sound.started)
-            //    Console.WriteLine("SOUND UPDATED " + ViewController.sound.workVolume());
         }
 
     }
@@ -64,8 +63,14 @@ public class HeadingUpdatedEventArgs : EventArgs
         this.head = head;
     }
 
-    public CLHeading GShead //getter setter head
+    public CLHeading GShead
     {
         get { return head; }
     }
 }
+
+/*
+Print heading
+            //if (ViewController.sound.started)
+            //    Console.WriteLine("SOUND UPDATED " + ViewController.sound.workVolume());
+*/

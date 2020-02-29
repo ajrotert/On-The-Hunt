@@ -10,6 +10,11 @@ using System.Threading;
 
 namespace ARHunter
 {
+
+
+    //This is not working
+
+
     public class LowPassAudio
     {
         public static int High_Level_Detected;
@@ -162,3 +167,12 @@ namespace ARHunter
         }
     }
 }
+
+
+/*
+View Controller View did load
+                AudioThread = new Thread(UpdateSoundBar);
+                LowPassAudio au = new LowPassAudio();
+                //AUDIO ISSUE HERE
+                au.AudioSetupStart();
+    */

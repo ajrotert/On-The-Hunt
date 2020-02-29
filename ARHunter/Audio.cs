@@ -19,7 +19,8 @@ namespace ARHunter
         public bool started = false;
 
         public int High_Level_Detected;
-        bool debug = false;
+        public static readonly bool debugPrint = false;
+        private const bool debug = false;
 
         public struct xycoordinate
         {
@@ -27,8 +28,6 @@ namespace ARHunter
             public double AvgPw;
             public double PekPw;
         };
-
-        //public List<xycoordinate> data2d = new List<xycoordinate>();
 
         public void autoStart()
         {
@@ -68,15 +67,12 @@ namespace ARHunter
             
             AudioQueueLevelMeterState[] levels = mAudioQueue.CurrentLevelMeterDB;
             AudioQueueLevelMeterState[] levels2 = mAudioQueue.CurrentLevelMeter;
-            //Console.WriteLine("Test 1: {1}, {0}, {2}", (120 - levels[channel].AveragePower * -1), ats.SampleTime, (120 - levels[channel].PeakPower * -1));
 
-            //Console.WriteLine("Test 2: {1}, {0}, {2}", (levels2[channel].AveragePower), ats.SampleTime, (levels2[channel].PeakPower));
-
-            xycoordinate x;//= new xycoordinate();
+            xycoordinate x;
             x.time = ats.SampleTime;
-            x.AvgPw = (levels2[channel].AveragePower); //(120 - levels[channel].AveragePower * -1);
-            x.PekPw = (levels2[channel].PeakPower);// (120 - levels[channel].PeakPower * -1);
-            //            data2d.Add(x);            
+            x.AvgPw = (levels2[channel].AveragePower); 
+            x.PekPw = (levels2[channel].PeakPower); 
+
             string output = x.time + " " + x.AvgPw + " " + x.PekPw + " ";
 
             if (debug)
@@ -95,19 +91,13 @@ namespace ARHunter
 
             double aLevel = 1 - (levels[channel].AveragePower / -120);
             double pLevel = 1 - (levels[channel].PeakPower / -120);
-            //Console.WriteLine("{0} {1} {2}", ats.SampleTime, aLevel, pLevel);
-            //            if (prior_shot >sensitivity && level > sensitivity)
-            //if (aLevel > sensitivity && pLevel > shotSensitivity && pLevel < maxSensitivity)
+
             if(levels2[channel].AveragePower > .9)
             {
                 High_Level_Detected++;
-                //return 1;
             }
 
-            //return (float)aLevel;
             return levels2[channel].AveragePower;
-            //return 1- levels[channel].PeakPower / -120;
-            //bar.Progress = levels[channel].PeakPower / -120;
 
         }
 
@@ -116,3 +106,22 @@ namespace ARHunter
 
 
 
+/*
+        //public List<xycoordinate> data2d = new List<xycoordinate>();
+        //= new xycoordinate();
+        //            data2d.Add(x);            
+
+Work Volume
+            //Console.WriteLine("{0} {1} {2}", ats.SampleTime, aLevel, pLevel);
+            //            if (prior_shot >sensitivity && level > sensitivity)
+            //if (aLevel > sensitivity && pLevel > shotSensitivity && pLevel < maxSensitivity)
+
+                    //return 1;
+                    //return (float)aLevel;
+
+                //return 1- levels[channel].PeakPower / -120;
+            //bar.Progress = levels[channel].PeakPower / -120;
+
+
+
+*/

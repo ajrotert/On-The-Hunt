@@ -140,8 +140,7 @@ namespace ARHunter
                     }
                 }
                 data.Add(e.Location.Coordinate);    //Adds each coordinate to the list in data
-                //if (ViewController.sound.started)   
-                //    Console.WriteLine("SOUND UPDATED " + ViewController.sound.workVolume());
+
             }
         }
 
@@ -204,4 +203,8 @@ public class LocationUpdatedEventArgs : EventArgs
        get { return location; }
     }
 }
-
+/*
+print location
+                    //if (ViewController.sound.started)   
+                //    Console.WriteLine("SOUND UPDATED " + ViewController.sound.workVolume());
+*/

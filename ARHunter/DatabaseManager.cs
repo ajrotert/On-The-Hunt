@@ -13,17 +13,14 @@ namespace ARHunter
         [PrimaryKey, AutoIncrement, Column("_id")]
         public int Id { get; set; }
 
-        //public CLLocationCoordinate2D[] MapTrace { get; set; }
-        //public MKPolyline MapTrace { get; set; }
-        //public Data MapTrace { get; set; }
-        //public double[] Longitutde { get; set; }
-        //public double[] Latitude { get; set; }
         public string data { get; set; }
 
         public DateTime date { get; set; }
     }
+
     public static class DatabaseManagement
     {
+        public static readonly bool debugPrint = false;
 
         public static void Access()
         {
@@ -34,7 +31,7 @@ namespace ARHunter
             SQLiteConnection db = new SQLiteConnection(dbPath);
             db.CreateTable<DatabaseManager_Trace>();
 
-            if (false) Console.WriteLine(output);
+            if (debugPrint) Console.WriteLine(output);
         }
 
         private static string format(Data d)
@@ -65,7 +62,7 @@ namespace ARHunter
 
             db.Insert(newData);
 
-            if (false) Console.WriteLine(output);
+            if (debugPrint) Console.WriteLine(output);
         }
 
         public static Data[] GetAll()
@@ -76,7 +73,6 @@ namespace ARHunter
 
             SQLiteConnection db = new SQLiteConnection(dbPath);
 
-            //var returned = db.Get<Data>(2);//get one item
             List<Data> list = new List<Data>();
             TableQuery<DatabaseManager_Trace> table = db.Table<DatabaseManager_Trace>();//get all items
             foreach (var s in table)
@@ -84,7 +80,7 @@ namespace ARHunter
                 list.Add( deformater(s.data) );
                 output += "\n" + s.Id;
             }
-            if (false) Console.WriteLine(output);
+            if (debugPrint) Console.WriteLine(output);
             return list.ToArray();
         }
         private static Data deformater(string s)
@@ -121,3 +117,14 @@ namespace ARHunter
         
     }
 }
+/*
+
+        //public CLLocationCoordinate2D[] MapTrace { get; set; }
+        //public MKPolyline MapTrace { get; set; }
+        //public Data MapTrace { get; set; }
+        //public double[] Longitutde { get; set; }
+        //public double[] Latitude { get; set; }
+
+                //var returned = db.Get<Data>(2);//get one item
+
+*/

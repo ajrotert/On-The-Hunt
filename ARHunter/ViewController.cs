@@ -17,20 +17,22 @@ namespace ARHunter
         public static HeaderFinder HeaderFinderManager;
 
         MapDelegate mapDelegate;
-        ////     internal static Audio sound = new Audio();
+        internal static Audio sound = new Audio();
         Thread AudioThread;
-        private int AudioThreadSleep = 15;
+        private const int AudioThreadSleep = 15;
 
-        public static bool debugPrint = true;
+        public static readonly bool debugPrint = true;
+
         private bool LocationAllowed;
+
         Thread Locations;
         UIAlertController alertController;
-
-        private Queue<CLLocationCoordinate2D> Shots_Found = new Queue<CLLocationCoordinate2D>();
 
         protected ViewController(IntPtr handle) : base(handle)
         {
             // Note: this .ctor should not contain any initialization logic.
+
+            //Aks/gets permissions for location services
             LocationFinderManager = new LocationFinder();
             LocationAllowed = LocationFinderManager.LocationServeciesStarted(true);
             LocationAllowed = LocationFinderManager.StartLocationUpdates();
@@ -40,7 +42,7 @@ namespace ARHunter
 
         private readonly CLLocationManager locationManager = new CLLocationManager();
 
-        //Called when the foreground is active, changes can only be made here, sound is updated here, Only UI is changed, referenced in viewdidload
+        //Called when the foreground is active, updates the location course information.
         public void HandleLocationChanged(object sender, LocationUpdatedEventArgs e)
         {
             CLLocation loc = e.Location;
@@ -63,11 +65,10 @@ namespace ARHunter
 
             MapView.UserTrackingMode = MKUserTrackingMode.Follow;
 
-            /*if (sound.started)
-                SoundBar.Progress = sound.workVolume();*/
+
             if (debugPrint) Console.WriteLine("Foreground Location Updated");
         }
-        //Called when the foreground is active, sound is called here. Chages are only to UI elements, reference viewdidload
+        //Called when the foreground is active, updates the heading information.
         public void HandleHeaderChanged(object sender, HeadingUpdatedEventArgs e)
         {
             CLHeading loc = e.GShead;
@@ -108,29 +109,20 @@ namespace ARHunter
                 if (debugPrint) Console.WriteLine("NOT FOUND::" + loc.TrueHeading);
                 BarButtonItem4.Image = UIImage.FromFile("ARH_Bar_Blank.png");
             }
-            /*if(sound.started)
-                SoundBar.Progress = sound.workVolume();*/
+            
             if (debugPrint) Console.WriteLine("Foreground Header Updated");
-        }
-
-        private void UpdateMap()
-        {
-            while (Shots_Found.Count > 0)
-            {
-                ShotDetected(Shots_Found.Dequeue());
-            }
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            //Shows the user loc. the entitlements, and info have to be updated
+            //Shows the user location if the entitlements.plist, and info.plist have the correct information
             MapView.ShowsUserLocation = true;
 
             //Reduces the visability of the map, appears as a tan tint
             MapView.Alpha = 0.5f;
-
+            View.BackgroundColor = UIColor.FromRGB(135, 115, 72);
 
             //Setting UI colors
             BarButtonItem.TintColor = UIColor.LightGray;
@@ -151,8 +143,8 @@ namespace ARHunter
                 HeaderFinderManager.HeadingUpdated -= HandleHeaderChanged;
                 if (debugPrint) Console.WriteLine("Deactive::");
             });
-            View.BackgroundColor = UIColor.FromRGB(135, 115, 72);
 
+            //Map settings
             MapView.MapType = MapKit.MKMapType.Hybrid;
             MapView.TintColor = UIColor.Black;
             MapView.ShowsCompass = true;
@@ -163,22 +155,26 @@ namespace ARHunter
             mapDelegate = new MapDelegate();
             MapView.Delegate = mapDelegate;
 
-            //Initalizing Audio thread to the sound updates function
-            ////       AudioThread = new Thread(SoundUpdates);
-
-            AudioThread = new Thread(UpdateSoundBar);
+            //Running audio updates concurrently 
+            AudioThread = new Thread(SoundUpdates);
 
             Pause_Button.Enabled = false;
 
+            //Adds any existing map traces to the map
             UpdateAnnotation();
 
             if (debugPrint) Console.WriteLine("Finished Loading");
 
-            LowPassAudio au = new LowPassAudio();
-            //AUDIO ISSUE HERE
-            au.AudioSetupStart();
-
         }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            //Starts collecting data
+            //Can only ask for permission if the main view is loaded
+            StartFuction();
+        }
+
+        //Starts collecting data, or asks for permisssion
         private void StartFuction()
         {
             if(!LocationAllowed)
@@ -191,6 +187,8 @@ namespace ARHunter
                 LocationFinderManager.StartDataCollection();
             }
         }
+
+        //Stops collecting data, and stops any location updates
         private void StopFunction()
         {
             if (Locations != null)
@@ -204,10 +202,9 @@ namespace ARHunter
                 MapView.UserTrackingMode = MKUserTrackingMode.None;
             }
         }
-        public override void ViewDidAppear(bool animated)
-        {
-            StartFuction();
-        }
+
+        //Thread to handle location permissions.
+        //Threaded so that the user keeps getting asked until they answer.
         private void AskForLocation()
         {
             int WaitTime = 5000;
@@ -223,6 +220,8 @@ namespace ARHunter
             }
             LocationFinderManager.StartDataCollection();
         }
+
+        //Creates a popup with custom error message
         public void ShowErrorMessage(string title = "Location Services OFF", string message = "Please turn on location services in settings.\nTurn on: Privacy->Location Services")
         {
             InvokeOnMainThread(delegate
@@ -235,41 +234,39 @@ namespace ARHunter
                 PresentViewController(alertController, true, null);
             });
         }
-        /* ////   public void SoundUpdates()
+        public void SoundUpdates()
+        {
+            //This function is threaded from the main thread.
+            //Used to constantly update the sound levels
+            if (debugPrint) Console.WriteLine("Sounds Update Thread");
+
+            //If the sound is not started the thread will end
+            while (sound.started)
             {
-                //This function is threaded from teh main thread.
-                //Used to constantly update the sound levels
-                if (debugPrint) Console.WriteLine("Sounds Update Thread");
+                //Gets the sound level
+                float level = sound.workVolume();
 
-                //Only run when the sound is started
-                while (sound.started)
+                //If the application is in the foreground then the progress bar in the main thread will be updated
+                InvokeOnMainThread(delegate
                 {
-                    //Gets the sound level
-                    float level = sound.workVolume();
-
-                    //If the application is in the foreground then the progress bar in the main thread will be updated
-                    InvokeOnMainThread(delegate
+                    UIApplicationState state = UIApplication.SharedApplication.ApplicationState;
+                    if (state == UIApplicationState.Active)
                     {
-                        UIApplicationState state = UIApplication.SharedApplication.ApplicationState;
-                        if (state == UIApplicationState.Active)
-                        {
-                            SoundBar.Progress = level;
-                        }
-                    });
-
-                    //Time delay, uses a variable, power saving mode may change this to update less
-                    Thread.Sleep(AudioThreadSleep);
-                    //if (level == 1)
-                    if(level > .9)
-                    {
-                        if (debugPrint) Console.WriteLine("Shot Found");
-                        Shots_Found.Enqueue(LocationFinderManager.GetLocation());
-                        if (debugPrint) Thread.Sleep(1500);
+                        SoundBar.Progress = level;
                     }
+                });
+
+                //Time delay, uses a variable, power saving mode may change this to update less
+                Thread.Sleep(AudioThreadSleep);
+
+                if(level > .9)
+                {
+                    if (debugPrint) Console.WriteLine("Shot Found");
+                    if (debugPrint) Thread.Sleep(1500);
                 }
             }
+        }
 
-        */
 
         partial void BarButtonItem5_Activated(UIBarButtonItem sender)
         {
@@ -290,16 +287,10 @@ namespace ARHunter
         {
 
             //Prevents data from being added to the data array, Stops location from being updated
-            LocationFinderManager.EndDataCollection();
-            LocationFinderManager.EndLocationUpdates();
+            StopFunction();
 
             //Stops sound from being recorded.
-            ////     sound.stop();
-
-            printdata();
-
-            //Update Map with shot annotations
-            UpdateMap();
+            sound.stop();
 
             //Creates route trace from collected data
             if (LocationFinderManager.data != null && LocationFinderManager.data.locs.Count > 1)
@@ -311,8 +302,6 @@ namespace ARHunter
             }
             catch { }
 
-            //CreateAnnotation(LocationFinderManager.data.locs.ToArray());
-
             //Kills off Audio thread if still active, and resets sound bar
             //**************************************
             AudioThread.Abort();
@@ -320,34 +309,14 @@ namespace ARHunter
             //**************************************
             //Changes UI color and control access
             Stop_Color();
-            ////    sound = new Audio();
-            ////    sound.stop();
+            sound = new Audio();
+            sound.stop();
 
             if (debugPrint) Console.WriteLine("Stop");
 
         }
 
-        private void printdata()
-        {
-            //int size = sound.data2d.Count;
-            //Console.WriteLine(size);
-            //for (int a = 0; a < size; a++)
-            //{
-            //   Console.Write("(" + sound.data2d[a].time + "," + sound.data2d[a].AvgPw + "," + sound.data2d[a].PekPw+ ") , ");
-            //    test += ("(" + sound.data2d[a].time + "," + sound.data2d[a].AvgPw + "," + sound.data2d[a].PekPw + ") , ");
 
-            //}
-            //Console.WriteLine();
-            //test += Environment.NewLine;
-
-            //SoundTestingController.AudioDataTestPoints = test;
-
-            //var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            //var filename = Path.Combine(documents, "Write.txt");
-            //var results = File.ReadAllText(filename);
-            //Console.WriteLine(results);
-
-        }
 
         partial void Pause_Clicked(UIButton sender)
         {
@@ -355,17 +324,13 @@ namespace ARHunter
             LocationFinderManager.EndDataCollection();
 
             //stops sound from recording
-            ////    sound.stop();
+            sound.stop();
 
             //Creating map route trace from collected data, rest collected data
             if (LocationFinderManager.data != null && LocationFinderManager.data.locs.Count > 1)
                 CreateAnnotation(new Data(LocationFinderManager.data));
 
-            //CreateAnnotation(LocationFinderManager.data.locs.ToArray());
-
-            //Update Map with shot annotations
-            UpdateMap();
-
+            //Data is already saved removes everything, prevents duplicated data
             LocationFinderManager.data.locs.Clear();
 
             //Changes UI color and control access
@@ -384,14 +349,12 @@ namespace ARHunter
             LocationFinderManager.StartDataCollection();
 
             //Starts a new AudioQueue
-            ////      sound.autoStart();
+            sound.autoStart();
 
             //Thread Audio, begins listening for shots
             //**************************************
             AudioThread.Abort();                    //Abort current thread
-                                                    ////      AudioThread = new Thread(SoundUpdates); //Create new instance
-                                                    ////      AudioThread = new Thread(SoundUpdates); //Create new instance
-            AudioThread = new Thread(UpdateSoundBar);
+            AudioThread = new Thread(SoundUpdates); //Create new instance
             AudioThread.Start();                    //Start threadss
             //**************************************
 
@@ -403,6 +366,7 @@ namespace ARHunter
 
         private void Start_Color()
         {
+            //Update colors and button access
             MapView.TintColor = UIColor.FromRGB(38, 102, 24);
             MapType_Segmented.TintColor = UIColor.FromRGB(38, 102, 24);
             //MapDelegate.color = UIColor.FromRGB(38, 102, 24);
@@ -415,6 +379,7 @@ namespace ARHunter
         }
         private void Pause_Color()
         {
+            //Update colors and button access
             MapView.TintColor = UIColor.FromRGB(186, 186, 44);
             MapType_Segmented.TintColor = UIColor.FromRGB(186, 186, 44);
             //MapDelegate.color = UIColor.FromRGB(186, 186, 44);
@@ -427,6 +392,7 @@ namespace ARHunter
         }
         private void Stop_Color()
         {
+            //Update colors and button access
             MapView.TintColor = UIColor.FromRGB(175, 32, 24);
             MapType_Segmented.TintColor = UIColor.FromRGB(175, 32, 24);
             //MapDelegate.color = UIColor.FromRGB(175, 32, 24);
@@ -440,6 +406,7 @@ namespace ARHunter
         }
         private void Center()
         {
+            //Centers the map around the user location
             double lat = MapView.UserLocation.Coordinate.Latitude;
             double lon = MapView.UserLocation.Coordinate.Longitude;
             var mapCenter = new CLLocationCoordinate2D(lat, lon);
@@ -450,18 +417,20 @@ namespace ARHunter
         }
         private void ShotDetected()
         {
+            //Creates a map annotation on the users current location
             MapView.AddAnnotations(new ShotsAnnotation("Shots Fired", new CLLocationCoordinate2D(locationManager.Location.Coordinate.Latitude, locationManager.Location.Coordinate.Longitude)));
             if (debugPrint) Console.WriteLine("Shots Fired Annotation");
         }
         private void ShotDetected(CLLocationCoordinate2D coordinate2D)
         {
+            //Creates a map annotation on the paramater location
             MapView.AddAnnotations(new ShotsAnnotation("Shots Detected", coordinate2D));
             if (debugPrint) Console.WriteLine("Shots Fired Annotation, Detected");
         }
 
-        //private void CreateAnnotation(CLLocationCoordinate2D[] route)
         private void Results(Data route)
         {
+            //Used for debuging. Shows the users locations and the number of data points
             int counter = 0;
             foreach (CLLocationCoordinate2D l in route.locs)
             {
@@ -471,7 +440,7 @@ namespace ARHunter
             UIAlertView alerting = new UIAlertView()
             {
                 Title = "Data Points Collected",
-                ////            Message = counter + " points of reference" + Environment.NewLine + Environment.NewLine + "Shots Found: " + sound.High_Level_Detected
+                Message = counter + " points of reference" + Environment.NewLine + Environment.NewLine + "Shots Found: " + sound.High_Level_Detected
             };
 
             alerting.AddButton("Okay");
@@ -480,11 +449,11 @@ namespace ARHunter
         private void CreateAnnotation(Data route)
         {
             //create a path from the route passed in
-            //MKPolyline trace = MKPolyline.FromCoordinates(route);
 
             //Add to database
             DatabaseManagement.Add(route);
 
+            //Adds annotation to map
             UpdateAnnotation();
 
             if (debugPrint) Console.WriteLine("Line Trace");
@@ -513,6 +482,7 @@ namespace ARHunter
 
         partial void Segment_Changed(UISegmentedControl sender)
         {
+            //Different Map views
             nint index = MapType_Segmented.SelectedSegment;
             if (index == 0)
             {
@@ -535,7 +505,54 @@ namespace ARHunter
             }
         }
 
+    }
+}
 
+
+/*
+View Controller Top
+     private Queue<CLLocationCoordinate2D> Shots_Found = new Queue<CLLocationCoordinate2D>();
+
+
+
+View Controller Functions
+        private void UpdateMap()
+        {
+            while (Shots_Found.Count > 0)
+            {
+                ShotDetected(Shots_Found.Dequeue());
+            }
+        }
+
+            private void printdata()
+        {
+            //int size = sound.data2d.Count;
+            //Console.WriteLine(size);
+            //for (int a = 0; a < size; a++)
+            //{
+            //   Console.Write("(" + sound.data2d[a].time + "," + sound.data2d[a].AvgPw + "," + sound.data2d[a].PekPw+ ") , ");
+            //    test += ("(" + sound.data2d[a].time + "," + sound.data2d[a].AvgPw + "," + sound.data2d[a].PekPw + ") , ");
+
+            //}
+            //Console.WriteLine();
+            //test += Environment.NewLine;
+
+            //SoundTestingController.AudioDataTestPoints = test;
+
+            //var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //var filename = Path.Combine(documents, "Write.txt");
+            //var results = File.ReadAllText(filename);
+            //Console.WriteLine(results);
+
+        }
+        //private void CreateAnnotation(CLLocationCoordinate2D[] route)
+
+
+
+
+
+
+        //Used to update the low pass audio
         public void UpdateSoundBar()
         {
             while (LowPassAudio.started)
@@ -557,5 +574,35 @@ namespace ARHunter
 
 
         }
-    }
-}
+
+
+
+
+
+Sound updates
+                        Shots_Found.Enqueue(LocationFinderManager.GetLocation());
+                        printdata();
+
+Stop Clicked
+            //Update Map with shot annotations
+            UpdateMap();
+            //CreateAnnotation(LocationFinderManager.data.locs.ToArray());
+
+Paused Clicked
+            //CreateAnnotation(LocationFinderManager.data.locs.ToArray());
+            //Update Map with shot annotations
+            UpdateMap();
+
+Start Clicked
+            // AudioThread = new Thread(UpdateSoundBar);
+
+Create annotation
+            //MKPolyline trace = MKPolyline.FromCoordinates(route);
+
+
+    //Removed from the view controller
+    //location handler, and heading handler
+               if (sound.started)
+                SoundBar.Progress = sound.workVolume();
+
+*/

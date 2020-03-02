@@ -142,10 +142,6 @@
     <Compile Include="Data.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="DatabaseManager.cs" />
-    <Compile Include="SoundTestingController.cs" />
-    <Compile Include="SoundTestingController.designer.cs">
-      <DependentUpon>SoundTestingController.cs</DependentUpon>
-    </Compile>
     <Compile Include="LowPassAudio.cs" />
   </ItemGroup>
   <ItemGroup>

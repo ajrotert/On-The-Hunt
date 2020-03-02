@@ -39,10 +39,6 @@ namespace ARHunter
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton GetDataButton { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UINavigationItem MainTitle { get; set; }
 
         [Outlet]
@@ -127,11 +123,6 @@ namespace ARHunter
             if (BarButtonItem5 != null) {
                 BarButtonItem5.Dispose ();
                 BarButtonItem5 = null;
-            }
-
-            if (GetDataButton != null) {
-                GetDataButton.Dispose ();
-                GetDataButton = null;
             }
 
             if (MainTitle != null) {

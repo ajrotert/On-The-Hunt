@@ -32,6 +32,7 @@
                                 </state>
                                 <connections>
                                     <action selector="Start_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3351"/>
+                                    <action selector="Start_Clicked:" destination="BYZ-38-t0r" id="45428" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2355">
@@ -44,6 +45,7 @@
                                 <state key="normal" title="Button" image="ARH_Pause_Button.png"/>
                                 <connections>
                                     <action selector="Pause_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3352"/>
+                                    <action selector="Pause_Clicked:" destination="BYZ-38-t0r" id="45429" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2356">
@@ -56,6 +58,7 @@
                                 <state key="normal" title="Button" image="ARH_Stop_Button.png"/>
                                 <connections>
                                     <action selector="Stop_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3353"/>
+                                    <action selector="Stop_Clicked:" destination="BYZ-38-t0r" id="45430" eventType="touchUpInside"/>
                                 </connections>
                             </button>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="8279">
@@ -79,17 +82,6 @@
                                 <color key="progressTintColor" red="0.23529411764705882" green="0.6470588235294118" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="trackTintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             </progressView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="43039" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="184" y="138" width="46" height="30"/>
-                                <state key="normal" title="Get"/>
-                                <constraints>
-                                    <constraint id="43041" firstAttribute="width" constant="46"/>
-                                    <constraint id="43042" firstAttribute="height" constant="30"/>
-                                </constraints>
-                                <connections>
-                                    <segue id="43233" destination="42992" kind="show"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -108,8 +100,6 @@
                             <constraint firstItem="40438" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="41650"/>
                             <constraint firstItem="40438" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="42712"/>
                             <constraint firstItem="197" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="42713"/>
-                            <constraint id="43040" firstItem="43039" firstAttribute="top" secondItem="8279" secondAttribute="centerY" constant="24"/>
-                            <constraint id="43043" firstItem="8279" firstAttribute="centerX" secondItem="43039" secondAttribute="leading" constant="23"/>
                         </constraints>
                     </view>
                     <toolbarItems>
@@ -150,7 +140,6 @@
                         <outlet property="SoundBar" destination="40438" id="name-outlet-40438"/>
                         <outlet property="Start_Button" destination="2354" id="name-outlet-2354"/>
                         <outlet property="Stop_Button" destination="2356" id="name-outlet-2356"/>
-                        <outlet property="GetDataButton" destination="43039" id="name-outlet-43039"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -186,54 +175,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="629" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-201" y="-5"/>
-        </scene>
-        <scene sceneID="42991">
-            <objects>
-                <viewController id="42992" sceneMemberID="viewController" customClass="SoundTestingController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="42989"/>
-                        <viewControllerLayoutGuide type="bottom" id="42990"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="42993">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" id="42996" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="20" y="70" width="374" height="616"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="44314" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="52" y="108" width="46" height="30"/>
-                                <state key="normal" title="Load"/>
-                                <constraints>
-                                    <constraint id="44322" firstAttribute="width" constant="46"/>
-                                    <constraint id="44323" firstAttribute="height" constant="30"/>
-                                </constraints>
-                                <connections>
-                                    <action selector="Load_TouchUpInside:" destination="42992" id="44377" eventType="touchUpInside"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <constraints>
-                            <constraint id="43237" firstItem="42996" firstAttribute="top" secondItem="42993" secondAttribute="top" constant="70"/>
-                            <constraint id="43238" firstAttribute="bottom" secondItem="42996" secondAttribute="bottom" constant="50"/>
-                            <constraint id="43239" firstItem="42996" firstAttribute="trailing" secondItem="42993" secondAttribute="trailingMargin"/>
-                            <constraint id="43241" firstItem="42996" firstAttribute="leading" secondItem="42993" secondAttribute="leadingMargin"/>
-                            <constraint id="44320" firstItem="44314" firstAttribute="top" secondItem="42989" secondAttribute="bottom" constant="38"/>
-                            <constraint id="44321" firstItem="44314" firstAttribute="leading" secondItem="42996" secondAttribute="leading" constant="32"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="TextBox" destination="42996" id="name-outlet-42996"/>
-                        <outlet property="Load" destination="44314" id="name-outlet-44314"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="42994" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="820" y="-16"/>
         </scene>
     </scenes>
     <resources>

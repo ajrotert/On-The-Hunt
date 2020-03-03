@@ -451,11 +451,17 @@ namespace ARHunter
             //create a path from the route passed in
 
             //Add to database
-            DatabaseManagement.Add(route);
+            DatabaseManagement.AddTrace(route);
 
             //Add a annotation to the start of route
-            MapView.AddAnnotations(new TraceAnnotation("Route Trace", 1, route.locs[0]));
-            if (debugPrint) Console.WriteLine("Route Trace Annotation");
+            annotationData annotation;
+            annotation.title = "Route Trace";
+            annotation.key = 1;
+            annotation.data = route.locs[0];
+            MapView.AddAnnotations(new TraceAnnotation(annotation));
+
+            //Add annotatoin to database
+            DatabaseManagement.AddAnnotation(annotation);
 
             //Adds annotation to map
             UpdateAnnotation();
@@ -467,14 +473,24 @@ namespace ARHunter
             IMKOverlay[] overlays = MapView.Overlays;
             if (overlays != null)
                 MapView.RemoveOverlays(MapView.Overlays);
+            IMKAnnotation[] mKAnnotation = MapView.Annotations;
+            if (mKAnnotation != null)
+                MapView.RemoveAnnotations(mKAnnotation);
 
             //Access database, will create table if needed
-            DatabaseManagement.Access();
-            Data[] traces = DatabaseManagement.GetAll();
+            DatabaseManagement.BuildAllTables();
+            Data[] traces = DatabaseManagement.GetAllTraces();
             //Add Overlay to map
             foreach (var i in traces)
             {
                 MapView.AddOverlay(MKPolyline.FromCoordinates(i.locs.ToArray()));
+            }
+
+            annotationData[] annotations = DatabaseManagement.GetAllAnnotations();
+            //Add Overlay to map
+            foreach (var j in annotations)
+            {
+                MapView.AddAnnotations(new TraceAnnotation(j));
             }
         }
 

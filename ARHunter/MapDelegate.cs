@@ -41,6 +41,7 @@ namespace ARHunter
                 if (annotationView == null)
                     annotationView = new MKAnnotationView(annotation, annotationId[1]);
 
+                annotationView.Image = UIImage.FromFile("traceinfo.png").ApplyTintColor(UIColor.Red);
                 annotationView.CanShowCallout = true;
             }
 

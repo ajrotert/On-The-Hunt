@@ -170,6 +170,7 @@
     <BundleResource Include="Resources\ARH_Banner_Logo2.png" />
     <BundleResource Include="Resources\LoadingLogo6.png" />
     <BundleResource Include="Resources\ShotAnnotationpng.png" />
+    <BundleResource Include="Resources\traceinfo.png" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="iTunesArtwork%402x" />

@@ -31,7 +31,6 @@
                                     <color key="titleColor" white="0.66666666666666696" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="Start_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3351"/>
                                     <action selector="Start_Clicked:" destination="BYZ-38-t0r" id="45428" eventType="touchUpInside"/>
                                 </connections>
                             </button>
@@ -44,7 +43,6 @@
                                 <color key="tintColor" red="0.61960784313725492" green="0.57647058823529407" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="Button" image="ARH_Pause_Button.png"/>
                                 <connections>
-                                    <action selector="Pause_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3352"/>
                                     <action selector="Pause_Clicked:" destination="BYZ-38-t0r" id="45429" eventType="touchUpInside"/>
                                 </connections>
                             </button>
@@ -57,7 +55,6 @@
                                 <color key="tintColor" red="0.60392156862745094" green="0.086274509803921567" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <state key="normal" title="Button" image="ARH_Stop_Button.png"/>
                                 <connections>
-                                    <action selector="Stop_Clicked:" destination="BYZ-38-t0r" eventType="touchDragInside" id="3353"/>
                                     <action selector="Stop_Clicked:" destination="BYZ-38-t0r" id="45430" eventType="touchUpInside"/>
                                 </connections>
                             </button>

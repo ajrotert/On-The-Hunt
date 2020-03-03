@@ -453,6 +453,10 @@ namespace ARHunter
             //Add to database
             DatabaseManagement.Add(route);
 
+            //Add a annotation to the start of route
+            MapView.AddAnnotations(new TraceAnnotation("Route Trace", 1, route.locs[0]));
+            if (debugPrint) Console.WriteLine("Route Trace Annotation");
+
             //Adds annotation to map
             UpdateAnnotation();
 

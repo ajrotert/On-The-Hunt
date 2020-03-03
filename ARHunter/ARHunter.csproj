@@ -143,6 +143,7 @@
     <Compile Include="Audio.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="LowPassAudio.cs" />
+    <Compile Include="TraceAnnotation.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ARH_Pause_Button.png" />

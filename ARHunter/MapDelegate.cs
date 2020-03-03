@@ -11,7 +11,7 @@ namespace ARHunter
     public class MapDelegate : MKMapViewDelegate
     {
         public static UIColor color = UIColor.Red;
-        private static string annotationId = "ShotsAnnotation";
+        private static string[] annotationId = { "ShotsAnnotation", "TraceAnnotation" };
         public MapDelegate()
         {
         }
@@ -22,15 +22,25 @@ namespace ARHunter
             if (annotation is MKUserLocation)
                 return null;
 
-            if (annotation is ShotsAnnotation)
+            else if (annotation is ShotsAnnotation)
             {
                 //show annotation
-                annotationView = mapView.DequeueReusableAnnotation(annotationId);
+                annotationView = mapView.DequeueReusableAnnotation(annotationId[0]);
 
                 if (annotationView == null)
-                    annotationView = new MKAnnotationView(annotation, annotationId);
+                    annotationView = new MKAnnotationView(annotation, annotationId[0]);
 
                 annotationView.Image = UIImage.FromFile("ShotAnnotationpng.png");
+                annotationView.CanShowCallout = true;
+            }
+            else if(annotation is TraceAnnotation)
+            {
+                //show annotation
+                annotationView = mapView.DequeueReusableAnnotation(annotationId[1]);
+
+                if (annotationView == null)
+                    annotationView = new MKAnnotationView(annotation, annotationId[1]);
+
                 annotationView.CanShowCallout = true;
             }
 

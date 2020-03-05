@@ -451,19 +451,22 @@ namespace ARHunter
             //create a path from the route passed in
 
             //Add to database
-            DatabaseManagement.AddTrace(route);
+            int key = DatabaseManagement.AddTrace(route);
 
-            //Add a annotation to the start of route
-            annotationData annotation;
-            annotation.title = "Route Trace";
-            annotation.key = 1;
-            annotation.data = route.locs[0];
-            MapView.AddAnnotations(new TraceAnnotation(annotation));
 
-            //Add annotatoin to database
-            DatabaseManagement.AddAnnotation(annotation);
+            if (route.locs.Count > 1)
+            {
+                //Create annotation data for the start of the route 
+                annotationData annotation;
+                annotation.title = "Route Trace";
+                annotation.key = key;
+                annotation.data = route.locs[1];
 
-            //Adds annotation to map
+                //Add annotatoin to database
+                DatabaseManagement.AddAnnotation(annotation);
+            }
+
+            //Adds annotation and route to map
             UpdateAnnotation();
 
             if (debugPrint) Console.WriteLine("Line Trace");

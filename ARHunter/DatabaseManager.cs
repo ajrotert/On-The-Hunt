@@ -34,7 +34,7 @@ namespace ARHunter
 
     public static class DatabaseManagement
     {
-        public static readonly bool debugPrint = false;
+        public static readonly bool debugPrint = true;
 
         public static void BuildAllTables()
         {
@@ -69,7 +69,7 @@ namespace ARHunter
 
             return s;
         }
-        public static void AddTrace(Data trace)
+        public static int AddTrace(Data trace)
         { 
             string output = "";
             output += "\nCreating database, if it doesn't already exist";
@@ -86,10 +86,12 @@ namespace ARHunter
             db.Insert(newData);
 
             if (debugPrint) Console.WriteLine(output);
+
+            return newData.Id;
         }
         public static void AddAnnotation(annotationData d)
         {
-            string output = "";
+            string output = "ANNOTATION: ";
             output += "\nCreating database, if it doesn't already exist";
             string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "ormdata.db3");
 
@@ -101,6 +103,9 @@ namespace ARHunter
             newData.title = d.title;
             newData.foreignKey = d.key;
             newData.data = format_annotation(d.data);
+            newData.date = DateTime.Now;
+
+            db.Insert(newData);
 
             if (debugPrint) Console.WriteLine(output);
         }
@@ -127,7 +132,7 @@ namespace ARHunter
         {   //title,key,data
 
             string output = "";
-            output += "\nGet query example: ";
+            output += "\nGet query example: ANNOTATIONS ";
             string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "ormdata.db3");
 
             SQLiteConnection db = new SQLiteConnection(dbPath);

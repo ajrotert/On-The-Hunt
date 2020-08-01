@@ -13,3 +13,9 @@ Being an avid Hunter I want to build a meaningful app.
 
 # Tech
 Built using Object-Oriented Design and C#.
+
+
+# Preview
+On The Hunt                 |  iOS App
+:-------------------------:|:-------------------------:
+![alt text 1](https://github.com/ajrotert/On-The-Hunt/blob/master/OnTheHunt.gif?raw=true)  |   iPhone Only
